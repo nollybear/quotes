@@ -10,7 +10,7 @@ def index(request):
     return render(request, "quotesapp/index.html")
 
 def register(request):
-    result =  User.objects.register(request.POST['first_name'], request.POST['last_name'], request.POST['email'], request.POST['password'], request.POST['confirm'], request.POST['birthday'])
+    result = User.objects.register(request.POST['first_name'], request.POST['last_name'], request.POST['email'], request.POST['password'], request.POST['confirm'], request.POST['birthday'])
     if result == True:
         email = request.POST['email']
         user = User.objects.filter(email=email)[0]
@@ -39,8 +39,8 @@ def quotes(request):
     if 'user_id' not in request.session:
         return redirect('/')
     user = User.objects.filter(id=request.session['user_id'])[0]
-    quotes = Quote.objects.filter()
     favorites = Favorite.objects.filter(user = user)
+    quotes = Quote.objects.filter().exclude(id__in=favorites)
     context = {
         "user":user,
         "quotes":quotes,

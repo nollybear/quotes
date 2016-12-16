@@ -6,14 +6,14 @@
     </head>
     <body>
 
-            <h1>You made it! Welcome {{user.first_name|title}}!!</h1>
+            <h1>Welcome to Quoatable Quotes, {{user.first_name|title}}!!</h1>
             <a href="/logout">Logout</a>
             <h3>Quoteable Quotes</h3>
             {% for quote in quotes %}
-                <p>{{quote.author}}: "{{quote.quote}}"<p>
-                <p>Posted by: <a href="/user/{{quote.user.id}}">{{quote.user.first_name}}</a></p>
-                <p>Posted by: <a href="/addfavorite/{{quote.id}}">Add this quote to favorites</a></p>
-
+                <p><strong>{{quote.author}}: "{{quote.quote}}"</strong><p>
+                <p>Posted by: <a href="/user/{{quote.user.id}}">{{quote.user.first_name}} {{quote.user.last_name}}</a></p>
+                <p><a href="/addfavorite/{{quote.id}}">Add this quote to favorites</a></p>
+                <hr>
             {% endfor %}
 
             <h3>Add Your Own Quotable Quote</h3>
@@ -26,11 +26,11 @@
                 Author: <input type="text" name="author"></br>
                 <input type="submit" value="Submit">
             </form>
-            <h3>My favorites</h3>
+            <h3>~*My FaVoRiTeS*~</h3>
             {% for favorite in favorites %}
                 <p>{{favorite.quote.author}}: "{{favorite.quote.quote}}"<p>
-                <p>Posted by: <a href="/user/{{favorite.quote.user.id}}">{{favorite.quote.user.first_name}}</a></p>
-
+                <p>Posted by <a href="/user/{{favorite.quote.user.id}}">{{favorite.quote.user.first_name}} {{favorite.quote.user.last_name}}</a></p>
+                <hr>
             {% endfor %}
 
 

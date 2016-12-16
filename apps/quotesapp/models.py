@@ -4,6 +4,7 @@ import re, bcrypt
 from bcrypt import hashpw
 from django.contrib import messages
 from itertools import count
+import datetime
 
 class UserManager(models.Manager):
     def register(self, first_name, last_name, email, password, confirm, birthday):
@@ -62,8 +63,10 @@ class QuoteManager(models.Manager):
         if len(quote_errors) is not 0:
             return (False, quote_errors)
         else:
+            if len(quote_errors) is not 0:
+                quote_errors.pop()
             Quotes = Quote.objects.create(user = user, quote = quote, author = author)
-            return (True)
+            return True
 
 class Quote(models.Model):
     user = models.ForeignKey(User)
