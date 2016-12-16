@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 import re, bcrypt
 from bcrypt import hashpw
+from django.contrib import messages
 from itertools import count
 
 class UserManager(models.Manager):
@@ -72,7 +73,7 @@ class Quote(models.Model):
     objects = QuoteManager()
 
 class FavoriteManager(models.Manager):
-    def addquote(self, user, quote):
+    def addfavorite(self, user, quote):
         Favorites = Favorite.objects.create(user = user, quote = quote)
         return (True)
 
@@ -80,4 +81,4 @@ class Favorite(models.Model):
     user = models.ForeignKey(User)
     quote = models.ForeignKey(Quote)
     created_at = models.DateTimeField(auto_now_add = True)
-    objects = QuoteManager()
+    objects = FavoriteManager()

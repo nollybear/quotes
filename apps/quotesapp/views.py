@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import User, Quote
+from .models import User, Quote, Favorite
 from django.contrib import messages
 from itertools import count
 
@@ -40,9 +40,11 @@ def quotes(request):
         return redirect('/')
     user = User.objects.filter(id=request.session['user_id'])[0]
     quotes = Quote.objects.filter()
+    favorites = Favorite.objects.filter(user = user)
     context = {
         "user":user,
-        "quotes":quotes
+        "quotes":quotes,
+        "favorites":favorites
     }
     return render(request, "quotesapp/quotes.html", context)
 
@@ -63,11 +65,8 @@ def addfavorite(request, id):
         return redirect('/')
     quote = Quote.objects.filter(id = id)[0]
     user = User.objects.filter(id = request.session['user_id'])[0]
-    result = Quote.objects.addquote(user = user, quote = request.POST['quote'], author = request.POST['author'])
+    result = Favorite.objects.addfavorite(user = user, quote = quote)
     if result == True:
-        return redirect('/quotes')
-    else:
-        request.session['quote_errors'] = result[1]
         return redirect('/quotes')
 
 

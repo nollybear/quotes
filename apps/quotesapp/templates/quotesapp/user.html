@@ -7,6 +7,8 @@
     <body>
 
             <h1>Posts by {{user.first_name|title}}</h1>
+            <a href="/quotes">Go back to main page</a>
+            <a href="/logout">Logout</a>
             <h3>Total Quotes: {{counter}}</h3>
             {% for quote in quotes %}
                 <p>{{quote.author}}: "{{quote.quote}}"</p>

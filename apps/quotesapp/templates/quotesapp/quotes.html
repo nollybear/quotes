@@ -26,6 +26,14 @@
                 Author: <input type="text" name="author"></br>
                 <input type="submit" value="Submit">
             </form>
+            <h3>My favorites</h3>
+            {% for favorite in favorites %}
+                <p>{{favorite.quote.author}}: "{{favorite.quote.quote}}"<p>
+                <p>Posted by: <a href="/user/{{favorite.quote.user.id}}">{{favorite.quote.user.first_name}}</a></p>
+
+            {% endfor %}
+
+
 
     </body>
 </html>
