@@ -10,7 +10,7 @@ def index(request):
     return render(request, "quotesapp/index.html")
 
 def register(request):
-    result =  User.objects.register(request.POST['first_name'], request.POST['last_name'], request.POST['email'], request.POST['password'], request.POST['confirm'])
+    result =  User.objects.register(request.POST['first_name'], request.POST['last_name'], request.POST['email'], request.POST['password'], request.POST['confirm'], request.POST['birthday'])
     if result == True:
         email = request.POST['email']
         user = User.objects.filter(email=email)[0]
@@ -39,25 +39,55 @@ def quotes(request):
     if 'user_id' not in request.session:
         return redirect('/')
     user = User.objects.filter(id=request.session['user_id'])[0]
-    quotes = Quote.objects.filter().order_by('-id')[:3]
+    quotes = Quote.objects.filter()
     context = {
         "user":user,
+        "quotes":quotes
     }
     return render(request, "quotesapp/quotes.html", context)
 
 def addquote(request):
     if 'user_id' not in request.session:
         return redirect('/')
-    result = Quote.objects.addquote(request.POST['title'], request.POST['author'])
-    if result[0] == True:
-        title = request.POST['title']
-        id = quote.id
-        user = User.objects.filter(id = request.session['user_id'])[0]
-        quote = Review.objects.create(user = user, book = book, review = request.POST['review'], rating = request.POST['rating'])
-        return redirect('/book/{}'.format(book.id))
-    else:
-        request.session['errors'] = result[1]
+    user = User.objects.filter(id = request.session['user_id'])[0]
+    result = Quote.objects.addquote(user = user, quote = request.POST['quote'], author = request.POST['author'])
+    if result == True:
         return redirect('/quotes')
+    else:
+        request.session['quote_errors'] = result[1]
+        return redirect('/quotes')
+
+
+def addfavorite(request, id):
+    if 'user_id' not in request.session:
+        return redirect('/')
+    quote = Quote.objects.filter(id = id)[0]
+    user = User.objects.filter(id = request.session['user_id'])[0]
+    result = Quote.objects.addquote(user = user, quote = request.POST['quote'], author = request.POST['author'])
+    if result == True:
+        return redirect('/quotes')
+    else:
+        request.session['quote_errors'] = result[1]
+        return redirect('/quotes')
+
+
+def user(request, id):
+    if 'user_id' not in request.session:
+        return redirect('/')
+    user = User.objects.filter(id = id)[0]
+    quotes = Quote.objects.filter(user = user)
+    counter = 0
+    for quote in quotes:
+        counter = counter + 1
+    context = {
+        "user":user,
+        "quotes":quotes,
+        "counter":counter
+    }
+    return render(request, "quotesapp/user.html", context)
+
+
+
 
 def undefined(request):
     return render(request, "quotesapp/404.html")

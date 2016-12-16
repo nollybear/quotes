@@ -5,7 +5,7 @@ from bcrypt import hashpw
 from itertools import count
 
 class UserManager(models.Manager):
-    def register(self, first_name, last_name, email, password, confirm):
+    def register(self, first_name, last_name, email, password, confirm, birthday):
         errors = []
         EMAIL_REGEX = (r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
         if len(first_name) <= 2:
@@ -24,16 +24,13 @@ class UserManager(models.Manager):
             return (False, errors)
         else:
             hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-            Users = User.objects.create(first_name = first_name, last_name = last_name, email = email, password = hashed)
+            Users = User.objects.create(first_name = first_name, last_name = last_name, email = email, password = hashed, birthday = birthday)
             return True
 
     def login(self, email, password):
             errors = []
-            print "this is the login function in the class", email
-            print "this is the login function in the class", password
             if User.objects.filter(email=email):
                 user = User.objects.filter(email=email)[0]
-                print "PRINT USER IN LOGIN METHOD", user
                 hashed = user.password
                 if bcrypt.hashpw(password.encode(), hashed.encode()) == hashed:
                     loggedin = "Successfully created new user"
@@ -54,25 +51,33 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     objects = UserManager()
 
-
-
 class QuoteManager(models.Manager):
-    def addquote(self, title, author):
-        errors = []
-        if len(title) <= 2:
-            errors.append("A book needs to have at least two character is required")
-        if len(author) <= 2:
-            errors.append("An author's name needs to have at least two character is required")
-        if len(errors) is not 0:
-            return (False, errors)
+    def addquote(self, user, quote, author):
+        quote_errors = []
+        if len(quote) <= 3:
+            quote_errors.append("A quote needs to have at least two characters.")
+        if len(author) <= 10:
+            quote_errors.append("An author's name needs to have at least ten characters.")
+        if len(quote_errors) is not 0:
+            return (False, quote_errors)
         else:
-            Books = Book.objects.create(title = title, author = author)
-            newbook = "Successfully created new book"
-            return (True, newbook)
+            Quotes = Quote.objects.create(user = user, quote = quote, author = author)
+            return (True)
 
 class Quote(models.Model):
     user = models.ForeignKey(User)
-    quote = models.CharField(max_length=500, default='null')
     author = models.CharField(max_length=45, default='null')
+    quote = models.CharField(max_length=500, default='null')
+    created_at = models.DateTimeField(auto_now_add = True)
+    objects = QuoteManager()
+
+class FavoriteManager(models.Manager):
+    def addquote(self, user, quote):
+        Favorites = Favorite.objects.create(user = user, quote = quote)
+        return (True)
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User)
+    quote = models.ForeignKey(Quote)
     created_at = models.DateTimeField(auto_now_add = True)
     objects = QuoteManager()
