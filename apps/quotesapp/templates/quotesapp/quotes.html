@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Book Reviews</title>
+    </head>
+    <body>
+
+            <h1>You made it! Welcome {{user.first_name|title}}!!</h1>
+            <a href="/logout">Logout</a>
+            <h3>Quotes</h3>
+            {% for book in books %}
+                <p><a href="/quote/{{quote.id}}">{{book.title}} by {{book.author}}</a></p>
+                {% for review in reviews %}
+                    {% if review.book.id == book.id %}
+                        Review by {{review.user.first_name}}</strong> {{review.review}} {{review.rating}}</p>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+
+
+            <form action="/addbook" method="post">
+                {% csrf_token %}
+                Title: <input type="text" name="title"></br>
+                Author: <input type="text" name="author"></br>
+                Review: <input type="text" name="review"></br>
+                Rating: <input type="text" name="rating"></br>
+                <input type="submit" value="Submit">
+            </form>
+
+    </body>
+</html>
